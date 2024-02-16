@@ -40,4 +40,9 @@ public class TaskServiceImplJpa implements ITaskService {
 		return id == null ? false : repo.existsById(id);
 	}
 
+	@Override
+	public List<Task> findByDone(boolean done) {
+		return done? repo.findByDoneTrue(): repo.findByDoneFalse();
+	}
+
 }

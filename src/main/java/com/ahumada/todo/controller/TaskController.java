@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -33,6 +34,22 @@ public class TaskController {
 				ResponseUtil.success(tasks);		
 	}
 	
+	@GetMapping("/done")
+	public ResponseEntity<APIResponse<List<Task>>> getAllTaskDone() {
+		return this._getTasksByDone(true);	
+	}
+	
+	@GetMapping("/undone")
+	public ResponseEntity<APIResponse<List<Task>>> getAllTaskUndone() {
+		return this._getTasksByDone(false);	
+	}	
+	
+	private ResponseEntity<APIResponse<List<Task>>> _getTasksByDone(boolean done) {
+		List<Task> tasks = taskService.findByDone(done);
+		return 	tasks.isEmpty()? ResponseUtil.notFound("No se encontraron tareas") :
+				ResponseUtil.success(tasks);		
+	}	
+	
 	@GetMapping("{id}")
 	public ResponseEntity<APIResponse<Task>> getTaskById(@PathVariable("id") Long id){
 		return 	taskService.exists(id)? ResponseUtil.success(taskService.findById(id)):
@@ -49,6 +66,27 @@ public class TaskController {
 	public ResponseEntity<APIResponse<Task>> updateTask(@RequestBody Task task){
 		return 	taskService.exists(task.getId())? ResponseUtil.success(task):
 				ResponseUtil.badRequest("No existe una tarea con id {0}", task.getId());
+	}
+	
+	@PatchMapping("/done/{id}")
+	private ResponseEntity<APIResponse<Task>> setTaskAsDone(@PathVariable("id") Long id){
+		return this._setTaskDone(id, true);
+	}
+	
+	@PatchMapping("/undone/{id}")
+	private ResponseEntity<APIResponse<Task>> setTaskAsUndone(@PathVariable("id") Long id){
+		return this._setTaskDone(id, false);
+	}	
+	
+	private ResponseEntity<APIResponse<Task>> _setTaskDone(Long id, boolean done){
+		if(taskService.exists(id)) {
+			Task task = taskService.findById(id);
+			task.setDone(done);
+			taskService.save(task);
+			return ResponseUtil.success(task);
+		}else {
+			return ResponseUtil.badRequest("No existe una tarea con id {0}", id);
+		}
 	}
 	
 	@DeleteMapping("{id}")
