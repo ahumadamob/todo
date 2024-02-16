@@ -6,6 +6,7 @@ import com.ahumada.todo.entity.Task;
 
 public interface ITaskService {
 	public List<Task> findAll();
+	public List<Task> findByDone(boolean done);
 	public Task findById(Long id);
 	public Task save(Task task);
 	public void delete(Long id);
