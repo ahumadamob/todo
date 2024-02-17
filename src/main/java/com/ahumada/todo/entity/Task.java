@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -14,6 +15,8 @@ public class Task {
 	@NotBlank
 	private String title;
 	private boolean done;
+	@ManyToOne(optional=true)
+	private Project project;
 	
 	public Long getId() {
 		return id;
@@ -33,4 +36,11 @@ public class Task {
 	public void setDone(boolean done) {
 		this.done = done;
 	}
+	public Project getProject() {
+		return project;
+	}
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
 }
