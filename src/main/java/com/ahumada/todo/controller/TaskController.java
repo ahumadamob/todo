@@ -14,11 +14,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import jakarta.validation.ConstraintViolationException;
+
+import com.ahumada.todo.entity.Project;
 import com.ahumada.todo.entity.Task;
+import com.ahumada.todo.service.IProjectService;
 import com.ahumada.todo.service.ITaskService;
 import com.ahumada.todo.util.APIResponse;
 import com.ahumada.todo.util.ResponseUtil;
+
+import jakarta.validation.ConstraintViolationException;
 
 @RestController
 @RequestMapping(path="/api/v1/task")
@@ -26,6 +30,9 @@ public class TaskController {
 	
 	@Autowired
 	private ITaskService taskService;
+	
+	@Autowired
+	private IProjectService projectService;
 	
 	@GetMapping
 	public ResponseEntity<APIResponse<List<Task>>> getAllTasks() {
@@ -88,6 +95,36 @@ public class TaskController {
 			return ResponseUtil.badRequest("No existe una tarea con id {0}", id);
 		}
 	}
+
+	
+	@PatchMapping("/assignproject/{taskid}/{projectid}")
+	private ResponseEntity<APIResponse<Task>> setTaskProject(@PathVariable("taskid") Long taskId, @PathVariable("projectid") Long projectId){
+		if(taskService.exists(taskId)) {
+			if(projectService.exists(projectId)) {
+				Task task = taskService.findById(taskId);
+				Project project = projectService.findById(projectId);
+				task.setProject(project);
+				taskService.save(task);
+				return ResponseUtil.success(task);
+			}else {
+				return ResponseUtil.badRequest("No existe un proyecto con id {0}", projectId);
+			}
+		}else {
+			return ResponseUtil.badRequest("No existe una tarea con id {0}", taskId);
+		}		
+	}
+	
+	@PatchMapping("/unassignproject/{id}")
+	private ResponseEntity<APIResponse<Task>> unsetTaskProject(@PathVariable("id") Long id){
+		if(taskService.exists(id)) {
+			Task task = taskService.findById(id);
+			task.setProject(null);
+			taskService.save(task);
+			return ResponseUtil.success(task);
+		}else {
+			return ResponseUtil.badRequest("No existe una tarea con id {0}", id);
+		}		
+	}	
 	
 	@DeleteMapping("{id}")
 	public ResponseEntity<APIResponse<Task>> deleteTask(@PathVariable("id") Long id){
