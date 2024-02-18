@@ -17,7 +17,9 @@ public class TaskServiceImplJpa implements ITaskService {
 
 	@Override
 	public List<Task> findAll() {
-		return repo.findAll();
+		List<Task> tasks = repo.findByDueDateNotNullOrderByDueDate();
+		tasks.addAll(repo.findByDueDateNull());
+		return tasks;
 	}
 
 	@Override
@@ -42,7 +44,15 @@ public class TaskServiceImplJpa implements ITaskService {
 
 	@Override
 	public List<Task> findByDone(boolean done) {
-		return done? repo.findByDoneTrue(): repo.findByDoneFalse();
+		if(done) {
+			List<Task> tasks = repo.findByDueDateNotNullAndDoneTrueOrderByDueDate();
+			tasks.addAll(repo.findByDueDateNullAndDoneTrue());
+			return tasks;
+		}else {
+			List<Task> tasks = repo.findByDueDateNotNullAndDoneFalseOrderByDueDate();
+			tasks.addAll(repo.findByDueDateNullAndDoneFalse());
+			return tasks;			
+		}
 	}
 
 }

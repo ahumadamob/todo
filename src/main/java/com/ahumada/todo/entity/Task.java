@@ -1,5 +1,7 @@
 package com.ahumada.todo.entity;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,6 +17,7 @@ public class Task {
 	@NotBlank
 	private String title;
 	private boolean done;
+	private LocalDate dueDate;
 	@ManyToOne(optional=true)
 	private Project project;
 	
@@ -42,5 +45,13 @@ public class Task {
 	public void setProject(Project project) {
 		this.project = project;
 	}
-	
+	public LocalDate getDueDate() {
+		return dueDate;
+	}
+	public void setDueDate(LocalDate dueDate) {
+		this.dueDate = dueDate;
+	}
+	public boolean isOverdue() {
+        return dueDate != null && dueDate.isBefore(LocalDate.now());
+    }
 }
