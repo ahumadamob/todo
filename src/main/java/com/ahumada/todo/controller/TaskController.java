@@ -71,7 +71,7 @@ public class TaskController {
 	
 	@PutMapping
 	public ResponseEntity<APIResponse<Task>> updateTask(@RequestBody Task task){
-		return 	taskService.exists(task.getId())? ResponseUtil.success(task):
+		return 	taskService.exists(task.getId())? ResponseUtil.success(taskService.save(task)):
 				ResponseUtil.badRequest("No existe una tarea con id {0}", task.getId());
 	}
 	
