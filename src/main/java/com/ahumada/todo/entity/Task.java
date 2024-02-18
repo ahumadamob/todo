@@ -50,5 +50,8 @@ public class Task {
 	}
 	public void setDueDate(LocalDate dueDate) {
 		this.dueDate = dueDate;
-	}	
+	}
+	public boolean isOverdue() {
+        return dueDate != null && dueDate.isBefore(LocalDate.now());
+    }
 }
