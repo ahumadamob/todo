@@ -1,5 +1,6 @@
 package com.ahumada.todo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,43 @@ public class ProjectController {
 	
 	@Autowired
 	private IProjectService projectService;
+	
+	@GetMapping("/metodo1/{id}")
+	public Project getProjectByIdForma1(@PathVariable("id") Long id) {
+		return projectService.findById(id);
+	}
+	
+	@GetMapping("/metodo2/{id}")
+	public APIResponse<Project> getProjectByIdForma2(@PathVariable("id") Long id){
+		Project project = new Project(); 
+		if(projectService.exists(id)) {
+			project = projectService.findById(id);
+			APIResponse<Project> api = new APIResponse<Project>(200, null, project);
+			return api;
+		}else {
+			List<String> lstMessages = new ArrayList<>();
+			lstMessages.add("No existe el elemento con el ID indicado");
+			APIResponse<Project> api = new APIResponse<Project>(404, lstMessages, null);
+			return api;
+		}
+	}
+	
+	@GetMapping("/metodo3/{id}")
+	public ResponseEntity<APIResponse<Project>> getProjectByIdForma3(@PathVariable("id") Long id){
+		Project project = new Project(); 
+		if(projectService.exists(id)) {
+			project = projectService.findById(id);
+			APIResponse<Project> api = new APIResponse<Project>(200, null, project);
+			return ResponseEntity.status(200).body(api);
+		}else {
+			List<String> lstMessages = new ArrayList<>();
+			lstMessages.add("No existe el elemento con el ID indicado");
+			APIResponse<Project> api = new APIResponse<Project>(404, lstMessages, null);
+			return ResponseEntity.status(404).body(api);
+		}
+	}	
+	
+	
 	
 	@GetMapping
 	public ResponseEntity<APIResponse<List<Project>>> getAllProjects() {
