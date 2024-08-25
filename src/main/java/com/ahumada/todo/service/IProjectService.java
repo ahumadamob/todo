@@ -9,5 +9,6 @@ public interface IProjectService {
 	public Project findById(Long id);
 	public boolean exists(Long id);
 	public Project save(Project project);
-	public void delete(Long id);	
+	public void delete(Long id);
+	public List <Project> encontrarPorDescripcion(String descripcion);
 }

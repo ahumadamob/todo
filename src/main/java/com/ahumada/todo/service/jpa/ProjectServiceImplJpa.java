@@ -40,4 +40,9 @@ public class ProjectServiceImplJpa implements IProjectService {
 		repo.deleteById(id);
 	}
 
+	@Override
+	public List<Project> encontrarPorDescripcion(String descripcion) {
+		return repo.findByDescriptionLike(descripcion);
+	}
+
 }
