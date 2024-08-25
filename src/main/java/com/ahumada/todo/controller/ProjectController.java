@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,6 +33,21 @@ public class ProjectController {
 	@GetMapping("/metodo1/{id}")
 	public Project getProjectByIdForma1(@PathVariable("id") Long id) {
 		return projectService.findById(id);
+	}
+	
+	@GetMapping("/pordescripcion/{desc}")
+	public List<Project>buscarProyectosPorDescripcion(@PathVariable("desc") String descripcion){
+		return projectService.encontrarPorDescripcion("%" + descripcion + "%");
+	}
+	
+	@GetMapping("/pordescripcion2/{desc}")
+	public ResponseEntity<List<Project>> buscarProyectosPorDescripcionMetodo2(@PathVariable("desc") String descripcion){
+		List<Project> listado = projectService.encontrarPorDescripcion("%" + descripcion + "%");
+		if(listado.isEmpty()) {
+			return new ResponseEntity<>(listado, HttpStatus.NO_CONTENT);
+		}else {
+			return new ResponseEntity<>(listado, HttpStatus.OK); 
+		}		
 	}
 	
 	@GetMapping("/metodo2/{id}")
